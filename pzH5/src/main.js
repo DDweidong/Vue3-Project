@@ -10,12 +10,20 @@ const app=createApp(App)
 app.config.globalProperties.$api=api
 
 //路由守卫
-router,beforeEach((to,from)=>{
-    if(to !=='/login'){
-        if(!localStorage.getItem('h5_token')){
-            return '/login'
-        }
+const whiteList = ['/login', '/'] // 👈 添加 '/' 到白名单！
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('h5_token')
+
+  if (whiteList.includes(to.path)) {
+    next() // 放行白名单
+  } else {
+    if (token) {
+      next()
+    } else {
+      next('/login')
     }
+  }
 })
 
 //路由
